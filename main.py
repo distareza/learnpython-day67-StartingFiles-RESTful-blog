@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, jsonify
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -44,17 +44,19 @@ class CreatePostForm(FlaskForm):
 
 @app.route('/')
 def get_all_posts():
+    ## https://gist.github.com/angelabauer/eff89874dfbda23ac3ac1c51c618b6e1
+    posts = BlogPost.query.all()
     return render_template("index.html", all_posts=posts)
 
 
 @app.route("/post/<int:index>")
 def show_post(index):
-    requested_post = None
-    for blog_post in posts:
-        if blog_post["id"] == index:
-            requested_post = blog_post
+    requested_post = BlogPost.query.get(index)
     return render_template("post.html", post=requested_post)
 
+@app.route("/edit_post/<int:post_id>")
+def edit_post(post_id):
+    pass
 
 @app.route("/about")
 def about():
